@@ -72,7 +72,7 @@ function App() {
     try {
 
       await axios.post(
-        'http://localhost:5000/api/customers',
+        '/api/customers',
         customer
       );
 
@@ -89,7 +89,7 @@ function App() {
     try {
 
       await axios.post(
-        'http://localhost:5000/api/customers',
+        '/api/customers',
         newCustomer
       ).then(res => {
         setNewCustomer({firstName: '',
@@ -112,7 +112,7 @@ function App() {
     try {
 
       const response = await axios.get(
-        `http://localhost:5000/api/customers/${searchPhone}`
+        `/api/customers/${searchPhone}`
       );
 
       setCustomer(response.data);
@@ -148,7 +148,7 @@ function App() {
       };
 
       await axios.put(
-        `http://localhost:5000/api/customers/${customer.phone}`,
+        `/api/customers/${customer.phone}`,
         updatedCustomer
       ).then(res=>{
         setTransaction({
@@ -180,7 +180,7 @@ function App() {
     try {
 
       await axios.put(
-        `http://localhost:5000/api/customers/${customer.phone}`,
+        `/api/customers/${customer.phone}`,
         customer
       );
 
