@@ -148,7 +148,7 @@ function App() {
       };
 
       await axios.put(
-        `/api/customers/${customer.phone}`,
+        `/api/customers?phone=${customer.phone}`,
         updatedCustomer
       ).then(res=>{
         setTransaction({
