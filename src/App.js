@@ -112,7 +112,7 @@ function App() {
     try {
 
       const response = await axios.get(
-        `/api/customers/${searchPhone}`
+        `/api/customers?phone=${searchPhone}`
       );
 
       setCustomer(response.data);

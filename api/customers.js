@@ -1,11 +1,5 @@
 import mongoose from 'mongoose';
-
-const MONGODB_URI = process.env.MONGODB_URI;
-
-if (!mongoose.connections[0].readyState) {
-
-    mongoose.connect(MONGODB_URI);
-}
+import connectDB from './mongodb';
 
 const transactionSchema = new mongoose.Schema({
     id: String,
@@ -28,7 +22,9 @@ const Customer =
 
 export default async function handler(req, res) {
 
-    // SEARCH CUSTOMER
+    await connectDB();
+
+    // GET
     if (req.method === 'GET') {
 
         try {
@@ -36,9 +32,7 @@ export default async function handler(req, res) {
             const { phone } = req.query;
 
             const customer =
-                await Customer.findOne({
-                    phone
-                });
+                await Customer.findOne({ phone });
 
             return res.status(200).json(customer);
 
@@ -50,7 +44,7 @@ export default async function handler(req, res) {
         }
     }
 
-    // SAVE CUSTOMER
+    // POST
     if (req.method === 'POST') {
 
         try {
@@ -71,7 +65,7 @@ export default async function handler(req, res) {
         }
     }
 
-    // UPDATE CUSTOMER
+    // PUT
     if (req.method === 'PUT') {
 
         try {
