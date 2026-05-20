@@ -133,12 +133,12 @@ function App() {
   const addTransaction = async () => {
 
     try {
-
+  
       const newTransaction = {
         ...transaction,
         id: `TXN-${Date.now()}`
       };
-
+  
       const updatedCustomer = {
         ...customer,
         transactions: [
@@ -146,31 +146,27 @@ function App() {
           newTransaction
         ]
       };
-
+  
       await axios.put(
         `/api/customers?phone=${customer.phone}`,
         updatedCustomer
-      ).then(res=>{
-        setTransaction({
-          id: '',
-          date: new Date().toISOString().split('T')[0],
-          amount: '',
-          productType: 'Vapes'
-        });
-      });
-
+      );
+  
       setCustomer(updatedCustomer);
-
-      alert('Transaction Added Successfully');
-
+  
       setTransaction({
         id: '',
-        date: '',
+        date: new Date().toISOString().split('T')[0],
         amount: '',
         productType: 'Vapes'
       });
-
+  
+      alert('Transaction Added Successfully');
+  
     } catch (error) {
+  
+      console.error(error);
+  
       alert('Failed To Add Transaction');
     }
   };
