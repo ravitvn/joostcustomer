@@ -4,10 +4,7 @@ const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!mongoose.connections[0].readyState) {
 
-    mongoose.connect(MONGODB_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
+    mongoose.connect(MONGODB_URI);
 }
 
 const transactionSchema = new mongoose.Schema({
@@ -31,18 +28,40 @@ const Customer =
 
 export default async function handler(req, res) {
 
-    const { phone } = req.query;
-
-    // GET CUSTOMER
+    // SEARCH CUSTOMER
     if (req.method === 'GET') {
 
         try {
 
-            const customer = await Customer.findOne({
-                phone
-            });
+            const { phone } = req.query;
+
+            const customer =
+                await Customer.findOne({
+                    phone
+                });
 
             return res.status(200).json(customer);
+
+        } catch (error) {
+
+            return res.status(500).json({
+                error: error.message
+            });
+        }
+    }
+
+    // SAVE CUSTOMER
+    if (req.method === 'POST') {
+
+        try {
+
+            const customer =
+                new Customer(req.body);
+
+            const savedCustomer =
+                await customer.save();
+
+            return res.status(201).json(savedCustomer);
 
         } catch (error) {
 
@@ -56,6 +75,8 @@ export default async function handler(req, res) {
     if (req.method === 'PUT') {
 
         try {
+
+            const { phone } = req.query;
 
             const updatedCustomer =
                 await Customer.findOneAndUpdate(
