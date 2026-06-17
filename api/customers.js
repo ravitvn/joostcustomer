@@ -13,7 +13,8 @@ const customerSchema = new mongoose.Schema({
     lastName: String,
     phone: String,
     dob: String,
-    transactions: [transactionSchema]
+    transactions: [transactionSchema],
+    rewardsResetDate: Date
 });
 
 const Customer =
@@ -70,7 +71,16 @@ export default async function handler(req, res) {
 
         try {
 
-            const { phone } = req.query;
+            const { phone, action } = req.query;
+
+            if (action === 'reset') {
+                const updatedCustomer = await Customer.findOneAndUpdate(
+                    { phone },
+                    { rewardsResetDate: new Date() },
+                    { new: true }
+                );
+                return res.status(200).json(updatedCustomer);
+            }
 
             const updatedCustomer =
                 await Customer.findOneAndUpdate(

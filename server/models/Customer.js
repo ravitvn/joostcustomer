@@ -15,7 +15,8 @@ const customerSchema = new mongoose.Schema({
     unique: true
   },
   dob: String,
-  transactions: [transactionSchema]
+  transactions: [transactionSchema],
+  rewardsResetDate: Date
 });
 
 module.exports = mongoose.model('Customer', customerSchema, 'customers')

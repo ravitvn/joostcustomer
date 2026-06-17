@@ -15,7 +15,8 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
+  Alert
 } from '@mui/material';
 
 import axios from 'axios';
@@ -171,6 +172,28 @@ function App() {
     }
   };
 
+  const getRewardsInfo = (cust) => {
+    if (!cust?.transactions?.length) return { totalSpent: 0, reward: 0 };
+    const resetDate = cust.rewardsResetDate ? new Date(cust.rewardsResetDate) : null;
+    const eligible = resetDate
+      ? cust.transactions.filter(t => new Date(t.date) > resetDate)
+      : cust.transactions;
+    const totalSpent = eligible.reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
+    return { totalSpent, reward: Math.floor(totalSpent / 100) * 5 };
+  };
+
+  const resetRewards = async () => {
+    try {
+      const response = await axios.put(
+        `/api/customers?phone=${customer.phone}&action=reset`
+      );
+      setCustomer(response.data);
+      alert('Rewards reset successfully');
+    } catch (error) {
+      alert('Failed to reset rewards');
+    }
+  };
+
   const updateCustomer = async () => {
 
     try {
@@ -228,6 +251,37 @@ function App() {
 
             </Box>
 
+
+            {customer.phone && (() => {
+              const { totalSpent, reward } = getRewardsInfo(customer);
+              return (
+                <Box sx={{ mt: 3, mb: 2 }}>
+                  <Typography variant="h6" gutterBottom>
+                    {customer.firstName} {customer.lastName}
+                  </Typography>
+                  {reward > 0 ? (
+                    <Alert severity="success" sx={{ mb: 2 }}>
+                      Eligible for <strong>${reward.toFixed(2)}</strong> in rewards
+                      &nbsp;(${totalSpent.toFixed(2)} spent since last reset)
+                    </Alert>
+                  ) : (
+                    <Alert severity="info" sx={{ mb: 2 }}>
+                      ${totalSpent.toFixed(2)} spent — needs ${(100 - (totalSpent % 100)).toFixed(2)} more to earn next $5 reward
+                    </Alert>
+                  )}
+                  {reward > 0 && (
+                    <Button
+                      variant="outlined"
+                      color="warning"
+                      onClick={resetRewards}
+                      sx={{ mb: 2 }}
+                    >
+                      Reset Rewards
+                    </Button>
+                  )}
+                </Box>
+              );
+            })()}
 
             {customer.phone && (
               <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
