@@ -42,6 +42,7 @@ function App() {
   });
 
   const [searchPhone, setSearchPhone] = useState('');
+  const [customerNotFound, setCustomerNotFound] = useState(false);
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -116,10 +117,12 @@ function App() {
         `/api/customers?phone=${searchPhone}`
       );
 
+      setCustomerNotFound(false);
       setCustomer(response.data);
 
     } catch (error) {
-      alert('Customer Not Found');
+      setCustomer({ firstName: '', lastName: '', phone: '', dob: '', transactions: [] });
+      setCustomerNotFound(true);
     }
   };
 
@@ -251,6 +254,22 @@ function App() {
 
             </Box>
 
+
+            {customerNotFound && (
+              <Alert severity="warning" sx={{ mt: 3 }}>
+                No customer found for <strong>{searchPhone}</strong>.{' '}
+                <Box
+                  component="span"
+                  onClick={() => {
+                    setNewCustomer({ firstName: '', lastName: '', phone: searchPhone, dob: '', transactions: [] });
+                    setTabValue(2);
+                  }}
+                  sx={{ cursor: 'pointer', textDecoration: 'underline', fontWeight: 'bold' }}
+                >
+                  Create New
+                </Box>
+              </Alert>
+            )}
 
             {customer.phone && (() => {
               const { totalSpent, reward } = getRewardsInfo(customer);
